@@ -25,7 +25,7 @@ public class AqsThread implements Runnable {
     public void run() {
         long start = System.currentTimeMillis();
         long end = 0;
-      LockSupport.park();
+       LockSupport.park();
         while ( !Thread.interrupted()) {
             count++;
            System.out.println(count);

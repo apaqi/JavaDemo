@@ -36,8 +36,11 @@ public class LockSupportTest {
        Thread.sleep(2000);
         // 中断线程
         LockSupport.unpark(t);
+        Thread.sleep(2000);
         LockSupport.park(t);
-      // t.join();
+        Thread.sleep(2000);
+        t.interrupt();
+         t.join();
         System.out.println("main over");
     }
 }
