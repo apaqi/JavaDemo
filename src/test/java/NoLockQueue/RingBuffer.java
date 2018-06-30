@@ -1,6 +1,7 @@
 package NoLockQueue;
 
 /**
+ * 生产者和消费者分别是单线程
  * User: yangkuan@jd.com
  * Time: 下午7:00
  */

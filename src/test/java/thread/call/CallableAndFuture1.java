@@ -17,7 +17,7 @@ public class CallableAndFuture1 {
             final int taskID = i;
            Future<Integer> future =  threadPool.submit(new Callable<Integer>() {
                 public Integer call() throws Exception {
-                    Thread.sleep(2000000);
+                    Thread.sleep(2000);
                     return taskID;
                 }
             });
@@ -27,7 +27,7 @@ public class CallableAndFuture1 {
         int i = 0;
         for(Future<Integer> future:futureList){
             System.out.println("index=" + i);
-            System.out.println(future.get(150000, TimeUnit.MILLISECONDS));
+            System.out.println(future.get(150, TimeUnit.MILLISECONDS));
             i++;
         }
     }

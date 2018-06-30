@@ -23,9 +23,9 @@ public class SpinLockTest1 {
         Thread1 thread6 = new Thread1();
         thread2.start();
         thread3.start();
-        thread4.start();
-        thread5.start();
-        thread6.start();
+   thread4.start();
+      /*       thread5.start();
+        thread6.start();*/
         PrintThread printThread = new PrintThread();
         printThread.start();
     }
