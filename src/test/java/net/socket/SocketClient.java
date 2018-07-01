@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class SocketClient extends Thread {
     public static void main(String[] args) throws InterruptedException {
-        int index = 25;
+        int index = 500;
         for(int i=0;i<index;i++){
              SocketClient socketClient = new SocketClient();
             socketClient.start();
@@ -23,7 +23,7 @@ public class SocketClient extends Thread {
     public void run(){
         Random rand =new Random();
         Integer time = rand.nextInt(25);
-        System.out.println(time);
+      //  System.out.println(time);
         writeToServer("localhost", 5209, time);
     }
     /**
@@ -48,7 +48,7 @@ public class SocketClient extends Thread {
 
             //3.利用流按照一定的操作，对socket进行读写操作
             String info="client---------------@"+time;
-            System.out.println(info);
+           // System.out.println(info);
             pw.write(info);
             pw.flush();
             socket.shutdownOutput();

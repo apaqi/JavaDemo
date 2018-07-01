@@ -29,15 +29,16 @@ public class NioTcpServer extends Thread {
 
     /**
      * 个人看法，1、如果是短连接，完全可以使用阻塞的socket server(SocketServer.java)，只要将异步处理的线程池阻塞队列设为无界，
-     * 客户端后来的socket连接请求，放入队列排队就好，客户端用完即可关闭。
+     * 客户端后来的socket连接请求，放入队列排队就好，客户端用完即可关闭，
      * 但是不适用于长连接，因为客户端可能通过长连接发送数据，服务端及时处理，如果这样，那么服务端只能使用一个线程长时间阻塞。
-     * 所以阻塞io适用于通常的web开发，NIO适用于长连接的游戏类。
+     * 所以阻塞io适用于通常的web开发(web集群可以应对高并发，但是单台web服务器应对高并发使用nio较好)，NIO适用于长连接的游戏类。
      * 2、redis使用的是nio，但客户端都是短连接，所以如果客户端和redis server能相互专属，那么使用阻塞io也可以。
      * redis server通过给很多业务使用，不像数据库可能给固定业务系统使用，所以redis server使用nio比较好；
      * 不过redis client仍然可以建立阻塞的长连接池，避免短连接建立的开销。
      * 3、如果mysql server使用nio模型，那么业务系统集群有n个实例，也不怕长连接超过了。现阶段mysql server服务器连接数是4000，举例:
-     * 如果集群有200个实例，每个实例的数据库连接池连接个数就不要超过20个。
+     * 如果集群有200个实例，每个实例的数据库连接池连接个数就不能超过20个。
      *
+     * 以上说的是epoll模型的nio。select的fds集合最多1024不适合高并发，暴力轮询io事件，性能低
      */
     @Override
     public void run() {
@@ -129,12 +130,12 @@ public class NioTcpServer extends Thread {
                  //   log.info("Server: readBytes = " + readBytes);
                     String data =  new String(byteBuffer.array(), 0, readBytes);
                     String time = data.split("@")[1];
+                    System.out.println(data);
                     Thread.sleep(new Integer(time).intValue()*1000);
                   //  System.out.println("Server: data = " +data);
-                    System.out.println(data);
                     byteBuffer.flip();
                     try{
-                    socketChannel.write(byteBuffer);//TODO 需要加一场捕捉，不然客户端超时，会异常
+                    socketChannel.write(byteBuffer);
                     }catch (Exception e){
 
                     }
