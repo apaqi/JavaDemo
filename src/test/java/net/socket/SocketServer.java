@@ -8,6 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ *  长连接server(阻塞io)
  * User: yangkuan@jd.com
  * Date: 18-6-28
  * Time: 下午12:42
@@ -21,9 +22,9 @@ public class SocketServer {
     ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 2, 2, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(1));
     public  void oneServer(){
         try{
-            ServerSocket serverSocket=null;
+            ServerSocket server=null;
             try{
-                serverSocket=new ServerSocket(5209);
+                server=new ServerSocket(5209);
                 //b)指定绑定的端口，并监听此端口。
                 System.out.println("服务器启动成功");
                 //创建一个ServerSocket在端口5209监听客户请求
@@ -34,19 +35,18 @@ public class SocketServer {
             Socket socket=null;
             try{
                 while (true){
-                socket=serverSocket.accept();
-                //2、调用accept()方法开始监听，等待客户端的连接
-                //使用accept()阻塞等待客户请求，有客户
-                //请求到来则产生一个Socket对象，并继续执行
-                System.out.println("***accept*******");
+                    socket=server.accept();
+                    //2、调用accept()方法开始监听，等待客户端的连接
+                    //使用accept()阻塞等待客户请求，有客户
+                    //请求到来则产生一个Socket对象，并继续执行
+                    System.out.println("****received message from client******");
                     IOAsyThread ioAsyThread =   new IOAsyThread(socket);
-                 //   ioAsyThread.run();
                     try{
-                  executor.execute(ioAsyThread);
+                        executor.execute(ioAsyThread);
                     }catch (Exception e){
                         try{
-                        ioAsyThread.writeMsgToClient(socket.getOutputStream(), "服务端拒绝，请重试");
                             socket.close();
+                            ioAsyThread.writeMsgToClient(socket.getOutputStream(), "服务端拒绝，请重试");
                         }catch (Exception e1){
                             System.out.println("异步线程池塞满,回写客户端异常:" + e1.getMessage());
                         }
@@ -79,7 +79,8 @@ class IOAsyThread extends Thread{
             //读取客户端传过来的数据
             readMessageFromClient(connection.getInputStream());
 
-            Thread.sleep(4000);
+            // Thread.sleep(4000);
+            System.out.println("****received message from client end******");
             //向客户端写入数据
             writeMsgToClient(connection.getOutputStream(),"I am server message!!!");
 
@@ -102,13 +103,11 @@ class IOAsyThread extends Thread{
      * @param inputStream
      */
     private   void readMessageFromClient(InputStream inputStream) throws IOException {
-        System.out.println("readMessageFromClient");
         Reader reader = new InputStreamReader(inputStream);
         BufferedReader br=new BufferedReader(reader);
-        String a = br.readLine();
-        while(a!=null){
-            System.out.println("readMessageFromClient:"+a);
-            a = br.readLine();
+        String a = null;
+        while((a=br.readLine())!=null){
+            System.out.println(a);
         }
     }
 
@@ -118,9 +117,9 @@ class IOAsyThread extends Thread{
      * @param string
      */
     public void writeMsgToClient(OutputStream outputStream, String string) throws IOException {
-        System.out.println("writeMsgToClient:"+string);
+        System.out.println(string);
         Writer writer = new OutputStreamWriter(outputStream);
-        writer.append(string);
+        writer.append("I am server message!!!");
         writer.flush();
         writer.close();
     }
