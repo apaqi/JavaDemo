@@ -142,7 +142,7 @@ public class NioTcpServer extends Thread {
                     break;
                 }
             }
-            socketChannel.close();
+             socketChannel.close();
         }
 
         @Override
