@@ -5,15 +5,16 @@ import java.net.Socket;
 import java.util.Random;
 
 /**
+ * 短连接client(阻塞io)
  * User: yangkuan@jd.com
  * Date: 18-6-28
  * Time: 下午1:45
  */
 public class SocketClient extends Thread {
     public static void main(String[] args) throws InterruptedException {
-        int index = 500;
+        int index = 25;
         for(int i=0;i<index;i++){
-             SocketClient socketClient = new SocketClient();
+            SocketClient socketClient = new SocketClient();
             socketClient.start();
         }
         sleep(1000000L);
@@ -23,7 +24,7 @@ public class SocketClient extends Thread {
     public void run(){
         Random rand =new Random();
         Integer time = rand.nextInt(25);
-      //  System.out.println(time);
+        System.out.println(time);
         writeToServer("localhost", 5209, time);
     }
     /**
@@ -48,7 +49,7 @@ public class SocketClient extends Thread {
 
             //3.利用流按照一定的操作，对socket进行读写操作
             String info="client---------------@"+time;
-           // System.out.println(info);
+            System.out.println(info);
             pw.write(info);
             pw.flush();
             socket.shutdownOutput();
