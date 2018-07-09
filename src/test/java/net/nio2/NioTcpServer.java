@@ -115,14 +115,15 @@ public class NioTcpServer extends Thread {
           //  log.info("Server: accept client socket " + socketChannel);
             socketChannel.configureBlocking(false);
             socketChannel.register(key.selector(), SelectionKey.OP_READ);
-            Thread.sleep(1000);
-            System.out.println("Server: accept client socket " + socketChannel);
+        //    Thread.sleep(1000);
+           // System.out.println("Server: accept client socket " + socketChannel);
         }
 
         @Override
-        public void handleRead(SelectionKey key) throws Exception {
+        public void  handleRead(SelectionKey key) throws Exception {
             ByteBuffer byteBuffer = ByteBuffer.allocate(512);
             SocketChannel socketChannel = (SocketChannel)key.channel();
+
             socketChannel.configureBlocking(false);
             while(true) {
                 int readBytes = socketChannel.read(byteBuffer);
@@ -130,8 +131,8 @@ public class NioTcpServer extends Thread {
                  //   log.info("Server: readBytes = " + readBytes);
                     String data =  new String(byteBuffer.array(), 0, readBytes);
                     String time = data.split("@")[1];
-                    System.out.println(data);
-                    Thread.sleep(new Integer(time).intValue()*1000);
+                    System.out.println(socketChannel.toString()+data);
+                 //   Thread.sleep(new Integer(time).intValue()*1000);
                   //  System.out.println("Server: data = " +data);
                     byteBuffer.flip();
                     try{
@@ -142,7 +143,7 @@ public class NioTcpServer extends Thread {
                     break;
                 }
             }
-             socketChannel.close();
+            // socketChannel.close();
         }
 
         @Override
