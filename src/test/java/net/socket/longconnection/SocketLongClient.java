@@ -3,6 +3,7 @@ package net.socket.longconnection;
 import java.io.*;
 import java.net.Socket;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 长连接client(阻塞io)
@@ -12,20 +13,20 @@ import java.util.Random;
  */
 public class SocketLongClient extends Thread {
     public static void main(String[] args) throws InterruptedException {
-        int index = 1;
+        int index = 25;
         for (int i = 0; i < index; i++) {
             SocketLongClient socketClient = new SocketLongClient();
             socketClient.start();
         }
         sleep(1000000L);
     }
-
+    private static  AtomicInteger  index = new AtomicInteger(0);
     @Override
     public void run() {
         Random rand = new Random();
         Integer time = rand.nextInt(3);
         //  System.out.println(time);
-        writeToServer("localhost", 5209, 1);
+        writeToServer("localhost", 5209, index.getAndIncrement());
     }
 
     /**
@@ -47,17 +48,13 @@ public class SocketLongClient extends Thread {
 
             PrintWriter outPw = new PrintWriter(os);
             ObjectOutputStream serverOutput = writeToServer(null, os, outPw, time);
-
-            //  socket.shutdownOutput();// 关闭该套接字的输入流
             BufferedReader serverReader = readFromServer(readServerIs, null);
             sleep(1000l);
             serverOutput = writeToServer(serverOutput, os, outPw, time);
-
-            //  socket.shutdownOutput();
+            //  socket.shutdownOutput();// 关闭该套接字的输入流
             readFromServer(readServerIs, serverReader);
 
             //4.关闭资源
-
             serverReader.close();
             readServerIs.close();
             outPw.close();
@@ -79,10 +76,10 @@ public class SocketLongClient extends Thread {
 
     public static ObjectOutputStream writeToServer(ObjectOutputStream oos, OutputStream os, PrintWriter outPw, int time) throws IOException {
         String info = "client---------------@" + time;
-
+        System.out.println(info);
 /*
         //3.利用流按照一定的操作，对socket进行读写操作
-        // System.out.println(info);
+        //
         outPw.write(info);
         outPw.flush();
                     os.flush();
